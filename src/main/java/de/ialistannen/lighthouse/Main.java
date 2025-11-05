@@ -91,6 +91,16 @@ public class Main {
 
     FileUpdateFilter updateFilter = new FileUpdateFilter(Path.of("data/known-images.json"));
 
+    // Update once
+    LOGGER.info("Initial update check...");
+    List<LighthouseContainerUpdate> updates = containerUpdateChecker.check();
+    // Notify for all updates
+    notifier.notify(updates);
+    updateListener.onUpdatesFound(updates);
+    // AFTER notify was successful!
+    updateFilter.commit();
+    
+    // Schedule later updates with cronjob
     new CronRunner(
       cronTime,
       notifier,
